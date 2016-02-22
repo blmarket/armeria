@@ -18,8 +18,18 @@ package com.linecorp.armeria.server.http.tomcat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
+
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
+import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
+import org.apache.catalina.servlets.DefaultServlet;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -37,8 +47,11 @@ public class UnmanagedTomcatServiceTest extends AbstractServerTest {
     private static Tomcat tomcat;
 
     @BeforeClass
-    public static void createTomcat() {
+    public static void createTomcat() throws LifecycleException {
         tomcat = new Tomcat();
+        Context context = tomcat.addContext("/t1", "tomcat_service");
+        // context.addServletMapping();
+        context.start();
     }
 
     @Override
